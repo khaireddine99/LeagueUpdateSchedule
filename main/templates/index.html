@@ -1,0 +1,52 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>League Update Schedule</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        
+    </body>
+    {% if error %}
+      <p>{{ error }}</p>
+    {% else %}
+      <h1>Nearest Patch Info</h2>
+      <h2>Release Date: {{ nearest_date }}</h2>
+      <h2>Patch Version: {{ patch_version }}</h2>
+    
+      <h3>Countdown to Patch Release: </h3>
+      <div id="countdown"></div>
+    
+      <script>
+        // Parse the ISO date string from Django context
+        const targetDate = new Date("{{ nearest_date }}");
+    
+        function updateCountdown() {
+          const now = new Date();
+          const diff = targetDate - now;
+    
+          if (diff <= 0) {
+            document.getElementById('countdown').innerHTML = "Patch is live!";
+            clearInterval(timer);
+            return;
+          }
+    
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((diff / (1000 * 60)) % 60);
+          const seconds = Math.floor((diff / 1000) % 60);
+    
+          document.getElementById('countdown').innerHTML =
+            days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+        }
+    
+        // Update countdown every second
+        updateCountdown();
+        const timer = setInterval(updateCountdown, 1000);
+      </script>
+    {% endif %}
+</html>
